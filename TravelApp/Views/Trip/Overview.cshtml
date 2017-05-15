@@ -1,0 +1,656 @@
+﻿@{
+    ViewData["Title"] = "Trip overview";
+    ViewData["NavTypeMini"] = true;
+}
+
+<div class="page-top" id="templatemo_events">
+</div> <!-- /.page-header -->
+
+<div id="tripPage"></div>
+
+@section Styles{
+    <link href="~/summernote/summernote.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/trip.css" />
+    <link rel="stylesheet" href="/dropzone/dropzone.css" />
+    <link rel="stylesheet" href="~/select2/css/select2.min.css" />
+}
+
+@section Scripts{
+    <script> 
+        window.TRIP_ID = @ViewData["trip_id"]; 
+        window.ALLOW_EDITING = @ViewData["allow_editing"];
+        window.AUTHENTICATED = @(User.Identity.IsAuthenticated ? "true" : "false");
+    </script>
+
+    <script type="text/x-template" id="tripPage-base">
+        <div class="middle-content tripPage" id="">
+            <trip-page-heading 
+                v-bind:trip="trip" 
+                v-bind:tabs="tabs"
+                v-on:viewTypeChanged="viewTypeChanged"></trip-page-heading>
+
+            <div class="tab-content">
+                <div role="tabpanel" v-bind:class="{active:(selectedTab == 'timeline')}" class="tab-pane">
+                    <trip-page-timeline 
+                        v-bind:timeline="trip.locations" 
+                        v-on:addLocation="addLocation"
+                        v-on:addEvent="addEvent"
+                        v-bind:viewType="trip.viewType"></trip-page-timeline>
+                </div>
+                <div role="tabpanel" v-bind:class="{active:(selectedTab == 'description')}" class="tab-pane">
+                    <trip-page-description 
+                        v-bind:viewType="trip.viewType" 
+                        v-bind:description="trip.description"></trip-page-description>
+                </div>
+                <div role="tabpanel" v-bind:class="{active:(selectedTab == 'gallery')}" class="tab-pane">
+                    <trip-page-gallery 
+                        v-bind:viewType="trip.viewType" 
+                        v-bind:photos="trip.photos"></trip-page-gallery>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script type="text/x-template" id="stars-component">
+        <div class="stars" v-on:mouseout="revealStarsTempCount">
+            <i  v-for="n in 5" 
+                v-bind:class="{ active: (starsTemp >= n) }"
+                v-on:click.prevent="setStarsCount(n)"
+                v-on:mouseover="setStarsTempCount(n)"></i>
+        </div>
+    </script>
+
+    <script type="text/x-template" id="comment-component">
+        <li class="timeline-item__comment">
+            <a href="#" class="timeline-item__comment-avatar" v-bind:style="{'background-image': 'url(/avatars/'+model.user.avatarUrl+')'}"></a>
+            <div class="timeline-item__comment-heading">
+                <a href="#">{{ model.user.name }} {{ model.user.surname }}</a>
+                <span>{{ model.dateAdd }}</span>
+                <a href="#" v-if="viewType == 'edit'" 
+                    v-on:click.prevent="deleteComment"
+                    class="btn btn-xs btn-danger pull-right" style="color: #fff">Удалить</a>
+            </div>
+            <div class="timeline-item__comment-body">
+                {{ model.content }}
+            </div>
+        </li>
+    </script>
+
+    <script type="text/x-template" id="tripPage-heading">
+        <div class="tripPage__heading">
+            <div class="container">
+                <div class="tripPage__title-wrap">
+                    <span class="tripPage__create-time">Дата создания: {{ trip.dateAdd }}</span>
+                    <h2 v-if="trip.viewType == 'overview'" 
+                        class="tripPage__title">{{ trip.title }}</h2>
+                    <input v-if="trip.viewType == 'edit' || trip.viewType == 'create'" 
+                        type="text" class="form-control input-lg tripPage__title-edit" v-model="trip.title" />
+
+                    <div class="trip-stars">
+                        <stars-component 
+                            v-on:starred="starred"
+                            v-bind:value="starValue"
+                            v-bind:enabled="starringEnabled"></stars-component>
+                        <span>{{ trip.starsCount }} голоса</span>
+                    </div>                
+                </div>
+                
+                <div class="tripPage__menu-wrap">
+                    <ul>
+                        <li v-for="item in tabs" v-bind:class="{active: item.active}">
+                            <a href="#" v-on:click.prevent="tabSelected(item)">{{ item.title }}</a>
+                        </li>
+                        <li v-if="allowEditing">
+                            <a href="#" class="edit" 
+                                v-on:click.prevent="toEditMode" 
+                                v-if="trip.viewType == 'overview'">редактировать</a>
+                            <a href="#" class="edit" 
+                                v-on:click.prevent="saveChanges"
+                                v-if="trip.viewType == 'edit' || trip.viewType == 'create'">сохранить</a>
+                        </li>
+                        <li v-if="allowEditing">
+                            <a href="#" class="delete" 
+                                v-on:click.prevent="deleteTrip" >удалить</a>
+                        </li>
+                    </ul>
+
+                    <div v-if="allowEditing" class="tripPage__trigger">
+                        <span v-if="trip.isPublic">Публичная</span>
+                        <span v-else>Скрытая</span>
+                        <div class="switch-wrap" v-if="trip.viewType == 'edit' || trip.viewType == 'create'">
+                            <input type="checkbox" class="round-toggle" id="public-check" v-model="trip.isPublic" />
+                            <label for="public-check"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script type="text/x-template" id="tripPage-timeline">
+        <div class="timeline" v-bind:class="{'timeline_edit': (viewType == 'edit')}">
+            <ul id="timeline" ref="timeline">
+                <timeline-location 
+                    v-for="location in timelineSorted" :key="location.id" 
+                    v-bind:pageViewType="viewType"
+                    v-bind:model="location"
+                    v-bind:data-id="location.id"></timeline-location>
+
+                <li class="timeline-item timeline-item_add" v-if="allowEditing && !timelineCreating">
+                    <div class="timeline-item__block">
+                        <div class="timeline-item__recomendations-wrap">
+                            <ul class="timeline-item__recomendations">
+                                <li>
+                                    <a href="#" 
+                                        v-on:click.prevent="addLocation"
+                                        class="timeline-item__recomendations-item timeline-item__recomendations_location">
+                                        Место
+                                    </a>
+                                </li>
+                                <li v-if="timeline && timeline.length > 0">
+                                    <a href="#" 
+                                        v-on:click.prevent="addEvent('hotel')"
+                                        class="timeline-item__recomendations-item timeline-item__recomendations_hotel">
+                                        Отель
+                                    </a>
+                                </li>
+                                <li v-if="timeline && timeline.length > 0">
+                                    <a href="#" 
+                                        v-on:click.prevent="addEvent('entertainment')"
+                                        class="timeline-item__recomendations-item timeline-item__recomendations_entertainment">
+                                        Развлечения
+                                    </a>
+                                </li>
+                                <li v-if="timeline && timeline.length > 0">
+                                    <a href="#" 
+                                        v-on:click.prevent="addEvent('interesting')"
+                                        class="timeline-item__recomendations-item timeline-item__recomendations_sight">
+                                        Интересное
+                                    </a>
+                                </li>
+                                <li v-if="timeline && timeline.length > 0">
+                                    <a href="#" 
+                                        v-on:click.prevent="addEvent('note')"
+                                        class="timeline-item__recomendations-item timeline-item__recomendations_note">
+                                        Заметка
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <span class="clearfix"></span>
+                </li>
+
+                <span class="clearfix"></span>
+            </ul>
+        </div>
+    </script>
+
+    <script type="text/x-template" id="timeline-location">
+        <li class="timeline-item clearfix timeline-location" v-bind:class="{'timeline-item_edit': (viewType == 'edit')}">
+            <span class="timeline-item__time" v-if="!model.mark || model.mark && model.mark !== 'new'">{{ model.arrivalDate }}</span>
+
+            <div class="timeline-item__block">
+                <div class="timeline-item__heading">
+                    <h3>{{ model.placeTitle }}</h3>
+                    <stars-component 
+                            class="timeline-item_stars"
+                            v-on:starred="starred"
+                            v-bind:value="starValue"
+                            v-bind:enabled="starringEnabled"></stars-component>
+                </div>
+                <div class="timeline-item__menu">
+                    <ul>
+                        <li :key="item.type" v-for="item in tabs" v-bind:class="{active: item.active}">
+                            <a href="#" v-on:click.prevent="tabSelected(item)">{{ item.title }}</a>
+                        </li>
+                        <li class="edit" v-if="allowEditing && viewType == 'overview'"><a v-on:click.prevent="toEditViewType" href="#"></a></li>
+                    </ul>
+                </div>
+
+                <div class="tab-content" v-show="viewType == 'overview'">
+                    <div role="tabpanel" v-bind:class="{active:(selectedTab == 'home')}" class="tab-pane">
+                        <div class="timeline-item__home-wrap">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>Адрес</label>
+                                    <p>{{ model.address? model.address : "--" }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label>Страна</label>
+                                    <p>{{ model.country? model.country : "--" }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label>Область</label>
+                                    <p>{{ model.state? model.state : "--" }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label>Город</label>
+                                    <p>{{ model.city? model.city : "--" }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" v-bind:class="{active:(selectedTab == 'map')}" class="tab-pane">
+                        <img v-bind:src="staticMapUrl" alt="" />
+                    </div>
+                    <div role="tabpanel" v-bind:class="{active:(selectedTab == 'description')}" class="tab-pane timeline-item__description-wrap">
+                        <div class="timeline-item__description" v-bind:class="{opened: descriptionOpened}" v-html="model.description"></div>
+                        <div class="timeline-item__description-toggle">
+                            <a href="#" v-on:click.prevent="descriptionOpenedToggle"></a>
+                        </div>
+                        <div class="timeline-item__comments">
+                            <form v-on:submit.prevent="addComment" v-if="authenticated">
+                                <div class="input-group">
+                                    <input v-model="commentText" type="text" class="form-control" placeholder="Введите комментарий...">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default timeline-item__comments-send"></button>
+                                    </span>
+                                </div>
+                            </form>
+
+                            <ul class="timeline-item__comment-list">
+                                <comment-component v-for="comment in model.comments" 
+                                    v-bind:model="comment"
+                                    :key="comment.id"
+                                    :viewType="viewType"></comment-component>
+                            </ul>
+                        </div>
+                        
+                    </div>
+                    <div role="tabpanel" v-bind:class="{active:(selectedTab == 'gallery')}" class="tab-pane timeline-item__album-wrap">
+                        <p v-if="model.photos.length == 0" class="text-center">Фотографии отсутствуют</p>
+                        <a  class="timeline-item__album-item"
+                            v-for="photo in model.photos"
+                            target="_blank"
+                            :href="'/photos/'+photo.url"
+                            :style="{'background-image': 'url(/photos/min/'+photo.url+')'}"></a>
+                        <span class="clearfix"></span>
+                    </div>
+                </div>
+
+                <div class="tab-content" v-show="allowEditing && viewType == 'edit'">
+                    <div role="tabpanel" v-bind:class="{active:(selectedTab == 'edit-main')}" class="tab-pane">
+                        <div class="timeline-item__form-wrap">
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Дата события</label>
+                                            <input v-model="model.arrivalDate" type="date" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Публичная/Скрытая</label>
+                                            <input v-model="model.isPublic" type="checkbox">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Название местоположения</label>
+                                            <input v-model="model.placeTitle" type="text" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Адрес</label>
+                                            <input v-model="model.address" type="text" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Страна</label>
+                                            <input v-model="model.country" type="text" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Область</label>
+                                            <input v-model="model.state" type="text" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Город</label>
+                                            <input v-model="model.city" type="text" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div role="tabpanel" v-bind:class="{active:(selectedTab == 'edit-map')}" class="tab-pane">
+                        <div class="timeline-item__map-search-wrap">
+                            <div class="input-group">
+                                <input type="text" class="form-control" v-model="geocoderSearchQuery" />
+                                <span class="input-group-btn">
+                                    <a class="btn btn-default" href="#" v-on:click.prevent="geocoderSearch">Поиск</a>
+                                    <a class="btn btn-primary" v-bind:class="{disabled: geocoderSearchResult == null}" href="#" v-on:click.prevent="applyGeocoderResult">Применить</a>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="travel-map" ref="editMap"></div>
+                    </div>
+                    <div role="tabpanel" v-bind:class="{active:(selectedTab == 'edit-description')}" class="tab-pane timeline-item__form-wrap">
+                        <div class="summernote" ref="description" v-html="model.description"></div>
+                    </div>
+                    <div role="tabpanel" v-show="!model.mark || model.mark && model.mark !== 'new'" v-bind:class="{active:(selectedTab == 'edit-comments')}" class="tab-pane">
+                        <div class="timeline-item__comments">
+                            <form v-on:submit.prevent="addComment">
+                                <div class="input-group">
+                                    <input v-model="commentText" type="text" class="form-control" placeholder="Введите комментарий...">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default timeline-item__comments-send"></button>
+                                    </span>
+                                </div>
+                            </form>
+
+                            <ul class="timeline-item__comment-list">
+                                <comment-component v-for="comment in model.comments" 
+                                    v-on:deleteComment="deleteComment"
+                                    v-bind:model="comment"
+                                    :key="comment.id"
+                                    :viewType="viewType"></comment-component>
+                            </ul>
+                        </div>
+                    </div>
+                    <div role="tabpanel" v-show="!model.mark || model.mark && model.mark !== 'new'" v-bind:class="{active:(selectedTab == 'edit-gallery')}" class="tab-pane timeline-item__album-wrap">
+                        <div class="dropzone" ref="dropzone"></div>
+
+                        <div class="timeline-item__album-item"
+                             v-for="photo in model.photos"
+                             :style="{'background-image': 'url(/photos/min/'+photo.url+')'}">
+                             <a v-on:click.prevent="deletePhoto(photo)" href="#" class="btn btn-danger btn-xs btn-block">Удалить</a>
+                        </div>
+                        <span class="clearfix"></span>
+                    </div>
+                </div>
+                <div class="timeline-item__footer" v-show="viewType == 'edit'">
+                    <div class="timeline-item__update-time pull-left"
+                        v-if="!model.mark || model.mark && model.mark !== 'new'">
+                        <label>Последнее изменение:</label>
+                        <span>{{ model.dateUpdate }}</span>
+                    </div>
+                    <div class="pull-right">
+                        <a href="#" class="btn btn-danger" v-on:click.prevent="deleteLocation">Удалить</a>
+                        <a href="#" class="btn btn-primary" v-on:click.prevent="saveLocation">Сохранить</a>
+                    </div>
+                    <span class="clearfix"></span>
+                </div>
+            </div>
+
+            <span class="clearfix"></span>
+
+            <ol class="location-events clearfix" v-if="model.events" ref="events">
+                <timeline-event 
+                    v-for="event in eventsSorted" :key="event.id"
+                    v-bind:model="event"
+                    v-bind:locationAddress="model.address"
+                    v-bind:locationGeoPosition="locationGeoPosition"
+                    v-bind:data-id="event.id"></timeline-event>
+            </ol>
+        </li>
+    </script>
+
+    <script type="text/x-template" id="timeline-event">
+        <li class="timeline-item clearfix timeline-event" v-bind:class="{'timeline-item_edit': (viewType == 'edit')}">
+            <span class="timeline-item__time" v-if="!model.mark || model.mark && model.mark !== 'new'">{{ model.eventDate }}</span>
+
+            <div class="timeline-item__block">
+                <div class="timeline-item__heading">
+                    <h3>{{ model.title }}</h3>
+                    <stars-component 
+                            class="timeline-item_stars"
+                            v-on:starred="starred"
+                            v-bind:value="starValue"
+                            v-bind:enabled="starringEnabled"></stars-component>
+                </div>
+                <div class="timeline-item__menu">
+                    <ul>
+                        <li :key="item.type" v-for="item in tabs" v-bind:class="{active: item.active}">
+                            <a href="#" v-on:click.prevent="tabSelected(item)">{{ item.title }}</a>
+                        </li>
+                        <li class="edit" v-if="allowEditing && viewType == 'overview'">
+                            <a v-on:click.prevent="toEditViewType" href="#"></a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="tab-content" v-show="viewType == 'overview'">
+                    <div role="tabpanel" v-bind:class="{active:(selectedTab == 'home')}" class="tab-pane">
+                        <div class="timeline-item__home-wrap">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label>Тип события</label>
+                                    <p>{{ model.eventType ? model.eventType : "--" }}</p>
+                                </div>
+                                <div class="col-md-12">
+                                    <label>Адрес</label>
+                                    <p>{{ model.address ? model.address : "--" }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" v-bind:class="{active:(selectedTab == 'map')}" class="tab-pane">
+                        <img v-bind:src="staticMapUrl" alt="" />
+                    </div>
+                    <div role="tabpanel" v-bind:class="{active:(selectedTab == 'description')}" class="tab-pane timeline-item__description-wrap">
+                        <div class="timeline-item__description" v-bind:class="{opened: descriptionOpened}" v-html="model.description"></div>
+                        <div class="timeline-item__description-toggle">
+                            <a href="#" v-on:click.prevent="descriptionOpenedToggle"></a>
+                        </div>
+                        <div class="timeline-item__comments">
+                            <form v-on:submit.prevent="addComment" v-if="authenticated">
+                                <div class="input-group">
+                                    <input v-model="commentText" type="text" class="form-control" placeholder="Введите комментарий...">
+                                    <span class="input-group-btn">
+                                                <button class="btn btn-default timeline-item__comments-send"></button>
+                                            </span>
+                                </div>
+                            </form>
+
+                            <ul class="timeline-item__comment-list">
+                                <comment-component v-for="comment in model.comments" v-bind:model="comment" :key="comment.id" :viewType="viewType"></comment-component>
+                            </ul>
+                        </div>
+
+                    </div>
+                    <div role="tabpanel" v-bind:class="{active:(selectedTab == 'gallery')}" class="tab-pane timeline-item__album-wrap">
+                        <p v-if="model.photos.length == 0" class="text-center">Фотографии отсутствуют</p>
+                        <a  class="timeline-item__album-item"
+                            v-for="photo in model.photos"
+                            target="_blank"
+                            :href="'/photos/'+photo.url"
+                            :style="{'background-image': 'url(/photos/min/'+photo.url+')'}"></a>
+                        <span class="clearfix"></span>
+                    </div>
+                </div>
+
+                <div class="tab-content" v-show="allowEditing && viewType == 'edit'">
+                    <div role="tabpanel" v-bind:class="{active:(selectedTab == 'edit-main')}" class="tab-pane">
+                        <div class="timeline-item__form-wrap">
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Дата события</label>
+                                            <input v-model="model.eventDate" type="date" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Публичная/Скрытая</label>
+                                            <input v-model="model.isPublic" type="checkbox">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Название события</label>
+                                            <input v-model="model.title" type="text" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Адрес</label>
+                                            <input v-model="model.address" type="text" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div role="tabpanel" v-bind:class="{active:(selectedTab == 'edit-recomendations')}" class="tab-pane">
+                        <div class="timeline-item__map-search-wrap">
+                            <div class="row">
+                                <div class="form-group col-sm-12">
+                                    <label>Местоположение:</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <input type="checkbox" v-model="useLocalLocationAddress" />
+                                        </span>
+                                        <input type="text" class="form-control" 
+                                            v-model="locationAddressLocal"
+                                            v-bind:disabled="!useLocalLocationAddress" />
+                                        <span class="input-group-btn">
+                                            <a class="btn btn-default" href="#" 
+                                                v-on:click.prevent="placesSearch"
+                                                v-bind:disabled="!useLocalLocationAddress">Поиск</a>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label>Типы:</label>
+                                    <select class="form-control" ref="placeTypes" multiple style="width: 100%" v-model="placesTypesSelected">
+                                        <option v-for="type in placesTypes" v-bind:value="type.value">{{ type.text }}</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label>Расстояние:</label>
+                                    <select class="form-control" v-model="placesDistanceSelected">
+                                        <option v-for="dist in placesDistances" v-bind:value="dist.value">{{ dist.text }}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <table class="table" style="margin-bottom: 0">
+                                <tbody>
+                                    <tr v-for="place in placesSearchResult">
+                                        <td>{{ place.name }}</td>
+                                        <td>{{ place.vicinity }}</td>
+                                        <td>
+                                            <a href="#" class="btn btn-xs btn-primary" 
+                                                v-on:click.prevent="choosePlace(place)">Выбрать</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <br>
+                            <span class="clearfix"></span>
+                            <img src="/images/powered_by_google_on_white.png" class="pull-right" alt="powered by google" />
+                            <span class="clearfix"></span>
+                        </div>
+                    </div>
+                    <div role="tabpanel" v-bind:class="{active:(selectedTab == 'edit-map')}" class="tab-pane">
+                        <div class="travel-map" ref="editMap"></div>
+                    </div>
+                    <div role="tabpanel" v-bind:class="{active:(selectedTab == 'edit-description')}" class="tab-pane timeline-item__form-wrap">
+                        <div class="summernote" ref="description" v-html="model.description"></div>
+                    </div>
+                    <div role="tabpanel" v-show="!model.mark || model.mark && model.mark !== 'new'" v-bind:class="{active:(selectedTab == 'edit-comments')}"
+                        class="tab-pane">
+                        <div class="timeline-item__comments">
+                            <form v-on:submit.prevent="addComment">
+                                <div class="input-group">
+                                    <input v-model="commentText" type="text" class="form-control" placeholder="Введите комментарий...">
+                                    <span class="input-group-btn">
+                                                <button class="btn btn-default timeline-item__comments-send"></button>
+                                            </span>
+                                </div>
+                            </form>
+
+                            <ul class="timeline-item__comment-list">
+                                <comment-component v-for="comment in model.comments" v-on:deleteComment="deleteComment" v-bind:model="comment" :key="comment.id"
+                                    :viewType="viewType"></comment-component>
+                            </ul>
+                        </div>
+                    </div>
+                    <div role="tabpanel" v-show="!model.mark || model.mark && model.mark !== 'new'" v-bind:class="{active:(selectedTab == 'edit-gallery')}"
+                        class="tab-pane timeline-item__album-wrap">
+                        <div class="dropzone" ref="dropzone"></div>
+
+                        <div class="timeline-item__album-item" v-for="photo in model.photos" :style="{'background-image': 'url(/photos/min/'+photo.url+')'}">
+                            <a v-on:click.prevent="deletePhoto(photo)" href="#" class="btn btn-danger btn-xs btn-block">Удалить</a>
+                        </div>
+                        <span class="clearfix"></span>
+                    </div>
+                </div>
+                <div class="timeline-item__footer" v-show="viewType == 'edit'">
+                    <div class="timeline-item__update-time pull-left" v-if="!model.mark || model.mark && model.mark !== 'new'">
+                        <label>Последнее изменение:</label>
+                        <span>{{ model.dateUpdate }}</span>
+                    </div>
+                    <div class="pull-right">
+                        <a href="#" class="btn btn-danger" v-on:click.prevent="deleteEvent">Удалить</a>
+                        <a href="#" class="btn btn-primary" v-on:click.prevent="saveEvent">Сохранить</a>
+                    </div>
+                    <span class="clearfix"></span>
+                </div>
+            </div>
+
+            <span class="clearfix"></span>
+        </li>
+    </script>
+
+    <script type="text/x-template" id="tripPage-description">
+        <div class="container">
+            <div class="trip-description">
+                <div class="summernote" ref="description" v-html="description"></div>
+            </div>
+        </div>
+    </script>
+    
+    <script type="text/x-template" id="tripPage-gallery">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12" v-show="viewType == 'edit'">
+                    <div class="dropzone" ref="dropzone"></div>
+                </div>
+
+                <div v-for="image in photos" class="col-xs-6 col-md-3">
+                    <div class="thumbnail">
+                        <a target="_blank" :href="'/photos/' + image.url">
+                            <img :src="'/photos/min/' + image.url" alt="">
+                        </a>
+                        <div class="caption" v-if="viewType == 'edit' && !image.isBasic">
+                            <a href="#" v-on:click.prevent="setPhotoBasic(image)" class="btn btn-primary btn-xs" role="button">Сделать основной</a>
+                            <a href="#" v-on:click.prevent="deletePhoto(image)" class="btn btn-danger btn-xs" role="button">Удалить</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+
+
+    <script src="~/js/Sortable.min.js"></script>
+    <script src='https://cdn.jsdelivr.net/scrollreveal.js/3.3.1/scrollreveal.min.js'></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="~/summernote/summernote.min.js"></script>
+    <script src="~/summernote/lang/summernote-ru-RU.js"></script>
+    <script src="~/dropzone/dropzone.js"></script>
+    <script src="~/select2/js/select2.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRagVXBCWgvRlx-Tn5U5xnquR7ikJzELA&libraries=places"></script>
+    <script> Dropzone.autoDiscover = false; </script>
+
+    <environment names="Development">
+        <script src="https://unpkg.com/vue@2.2.6/dist/vue.js"></script>
+        <script src="https://unpkg.com/vuex@2.3.1/dist/vuex.js"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script src="https://unpkg.com/vue@2.2.6/dist/vue.min.js"></script>
+        <script src="https://unpkg.com/vuex@2.3.1/dist/vuex.min.js"></script>
+    </environment>
+
+    <script src="~/js/TripEdit.js"></script>
+}

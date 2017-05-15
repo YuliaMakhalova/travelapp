@@ -1,0 +1,170 @@
+﻿@{ 
+    var IsAuthenticated = User.Identity.IsAuthenticated;
+    var email = User.Identity.Name;
+}
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1200, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+
+    <environment names="Development,Staging,Production">
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,500,800,700,600,300' rel='stylesheet' type='text/css'>
+        
+        <link rel="stylesheet" href="~/css/bootstrap.min.css">
+        <link rel="stylesheet" href="~/css/font-awesome.css">
+        <link rel="stylesheet" href="~/css/animate.css">
+        <link rel="stylesheet" href="~/css/templatemo_misc.css">
+        <link rel="stylesheet" href="~/css/templatemo_style.css">
+
+        <link rel="stylesheet" type="text/css" href="~/css/style.css" />
+    </environment>
+
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+    <div class="site_wrap">
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+        <![endif]-->
+
+        @{ var mini = ((bool)ViewData["NavTypeMini"] ? "mini" : ""); }
+        <div class="site-header @mini">
+            <div class="container">
+                <div class="main-header">
+                    <div class="row">
+                        <div class="col-md-4 col-sm-6 col-xs-10">
+                            <div class="logo logo-text">
+                                <a asp-area="" asp-controller="Home" asp-action="Index">
+                                    <span>Travel</span>app
+                                </a>
+                            </div> <!-- /.logo -->
+                        </div> <!-- /.col-md-4 -->
+                        <div class="col-md-8 col-sm-6 col-xs-2">
+                            <div class="main-menu">
+                                <ul class="visible-lg visible-md">
+                                    <li @if((string)ViewData["Page"] == "home"){ <text>class="active"</text> }>
+                                        <a asp-area="" asp-controller="Home" asp-action="Index">Главная</a></li>
+                                    <li @if((string)ViewData["Page"] == "trips"){ <text>class="active"</text> }>
+                                        <a asp-area="" asp-controller="Trip" asp-action="Index">Все поездки</a></li>
+                                    @if (IsAuthenticated)
+                                    {
+                                        <li @if ((string)ViewData["Page"] == "mytrips") { <text> class="active" </text>  }>
+                                            <a asp-area="" asp-controller="Trip" asp-action="MyTrips">Мои поездки</a>
+                                        </li>
+                                    }
+
+                                    <li @if ((string)ViewData["Page"] == "addTrip") { <text> class="active" </text>  }>
+                                        <a asp-area="" asp-controller="Trip" asp-action="Create">Создать</a>
+                                    </li>
+
+                                    @if (IsAuthenticated)
+                                    {
+                                        <li @if ((string)ViewData["Page"] == "profile") { <text> class="active" </text>  }>
+                                            <a asp-area="" asp-controller="Account" asp-action="Profile">Профиль</a>
+                                        </li>
+                                        <li><a asp-area="" asp-controller="Account" asp-action="Logout">Выйти</a></li>
+                                    }
+                                    else
+                                    {
+                                        <li @if ((string)ViewData["Page"] == "loginRegister") { <text> class="active" </text>  }>
+                                            <a asp-area="" asp-controller="Account" asp-action="Login">Вход / Регистрация</a>
+                                        </li>
+                                    }
+                                </ul>
+                                <a href="#" class="toggle-menu visible-sm visible-xs">
+                                    <i class="fa fa-bars"></i>
+                                </a>
+                            </div> <!-- /.main-menu -->
+                        </div> <!-- /.col-md-8 -->
+                    </div> <!-- /.row -->
+                </div> <!-- /.main-header -->
+
+                <div class="row">
+                    <div class="col-md-12 visible-sm visible-xs">
+                        <div class="menu-responsive">
+                            <ul class="visible-sm visible-xs">
+                                <li @if((string)ViewData["Page"] == "home"){ <text>class="active"</text> }>
+                                    <a asp-area="" asp-controller="Home" asp-action="Index">Главная</a></li>
+                                <li @if((string)ViewData["Page"] == "trips"){ <text>class="active"</text> }>
+                                    <a asp-area="" asp-controller="Trip" asp-action="Index">Все поездки</a></li>
+                                @if (IsAuthenticated)
+                                {
+                                    <li @if ((string)ViewData["Page"] == "mytrips") { <text> class="active" </text>  }>
+                                        <a asp-area="" asp-controller="Trip" asp-action="MyTrips">Мои поездки</a>
+                                    </li>
+                                }
+
+                                <li @if ((string)ViewData["Page"] == "addTrip") { <text> class="active" </text>  }>
+                                    <a asp-area="" asp-controller="Trip" asp-action="Create">Создать</a>
+                                </li>
+
+                                @if (IsAuthenticated)
+                                {
+                                    <li @if ((string)ViewData["Page"] == "profile") { <text> class="active" </text>  }>
+                                        <a asp-area="" asp-controller="Account" asp-action="Profile">Профиль</a>
+                                    </li>
+                                    <li><a asp-area="" asp-controller="Account" asp-action="Logout">Выйти</a></li>
+                                }
+                                else
+                                {
+                                    <li @if ((string)ViewData["Page"] == "loginRegister") { <text> class="active" </text>  }>
+                                        <a asp-area="" asp-controller="Account" asp-action="Login">Вход / Регистрация</a>
+                                    </li>
+                                }
+                            </ul>
+                        </div> <!-- /.menu-responsive -->
+                    </div> <!-- /.col-md-12 -->
+                </div> <!-- /.row -->
+
+            </div> <!-- /.container -->
+        </div> <!-- /.site-header -->
+
+        @RenderBody()
+
+        <div class="site-footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4 col-sm-4">
+                        <div class="footer-logo">
+                            <a asp-area="" asp-controller="Home" asp-action="Index">
+                                <span>Travel</span>app
+                            </a>
+                        </div>
+                    </div> <!-- /.col-md-4 -->
+                    <div class="col-md-4 col-sm-4">
+                        <div class="copyright">
+                            <span>
+                                Copyright &copy; @DateTime.Now.Year <a href="#">Travel app &amp; Co.</a>
+                            </span>
+                        </div>
+                    </div> <!-- /.col-md-4 -->
+                    <div class="col-md-4 col-sm-4">
+                        <ul class="social-icons">
+                            <li><a href="#" class="fa fa-facebook"></a></li>
+                            <li><a href="#" class="fa fa-twitter"></a></li>
+                            <li><a href="#" class="fa fa-linkedin"></a></li>
+                            <li><a href="#" class="fa fa-flickr"></a></li>
+                            <li><a href="#" class="fa fa-rss"></a></li>
+                        </ul>
+                    </div> <!-- /.col-md-4 -->
+                </div> <!-- /.row -->
+            </div> <!-- /.container -->
+        </div> <!-- /.site-footer -->
+    </div>
+
+    <environment names="Development,Staging,Production">
+        <script src="~/js/vendor/jquery-1.11.0.min.js"></script>
+        <script>window.jQuery || document.write('<script src="~/js/vendor/jquery-1.11.0.min.js"><\/script>')</script>
+        <script src="~/js/bootstrap.js"></script>
+        <script src="~/js/plugins.js"></script>
+        <script src="~/js/main.js"></script>
+    </environment>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

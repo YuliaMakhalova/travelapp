@@ -1,0 +1,535 @@
+@{
+    ViewData["Title"] = "All trips";
+    ViewData["Page"] = "trips";
+    ViewData["NavTypeMini"] = true;
+}
+
+<div class="page-top" id="templatemo_events">
+</div> <!-- /.page-header -->
+
+<div class="middle-content tripPage">
+    <div class="tripPage__heading">
+        <div class="container">
+            <div class="tripPage__title-wrap">
+                <span class="tripPage__create-time">Дата создания: 18.04.2017 18:36</span>
+                <h2 class="tripPage__title">Медитация в гималаях</h2>
+                <!--<input type="text" class="form-control input-lg tripPage__title-edit" value="Медитация в гималаях" />-->
+
+                <div class="trip-stars">
+                    <div class="stars">
+                        <i class="active"></i>
+                        <i class="active"></i>
+                        <i class="active"></i>
+                        <i class="active"></i>
+                        <i></i>
+                    </div>
+                    <span>504 голоса</span>
+                </div>                
+            </div>
+            
+            <div class="tripPage__menu-wrap">
+                <ul>
+                    <li class="active"><a data-toggle="tab" href="#trip-section__timeline">путешествие</a></li>
+                    <li><a data-toggle="tab" href="#trip-section__description">описание</a></li>
+                    <li><a data-toggle="tab" href="#trip-section__gallery">галерея</a></li>
+                    <li><a href="#" class="edit">редактировать</a></li>
+                </ul>
+
+                <div class="tripPage__trigger">
+                    <span>Публичная</span>
+                    <div class="switch-wrap">
+                        <input type="checkbox" class="round-toggle" id="public-check" />
+                        <label for="public-check"></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="tab-content">
+        <div role="tabpanel" class="active tab-pane" id="trip-section__timeline">
+            <div class="timeline timeline_edit"><!-- timeline_edit -->
+                <ul id="timeline">
+                    <li class="timeline-item clearfix timeline-location">
+                        <span class="timeline-item__time">12.08.2017</span>
+
+                        <div class="timeline-item__block">
+                            <div class="timeline-item__heading">
+                                <h3>Россия, Москва</h3>
+                                <div class="timeline-item_stars stars">
+                                    <i class="active"></i>
+                                    <i class="active"></i>
+                                    <i class="active"></i>
+                                    <i class="active"></i>
+                                    <i></i>
+                                </div>
+                            </div>
+                            <div class="timeline-item__menu">
+                                <ul>
+                                    <li class="active"><a data-toggle="tab" href="#timeline-item__map-wrap">на карте</a></li>
+                                    <li><a data-toggle="tab" href="#timeline-item__description-wrap">описание</a></li>
+                                    <li><a data-toggle="tab" href="#timeline-item__getting-there-wrap">как добраться?</a></li>
+                                    <li class="edit"><a href="#"></a></li>
+                                </ul>
+                            </div>
+
+                            <div class="tab-content">
+                                <div role="tabpanel" class="active tab-pane" id="timeline-item__map-wrap">
+                                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d574780.1723663379!2d36.98930748818253!3d55.75441897981755!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x414ac82c9958e7af%3A0xb57a3f488cfc4ca!2z0LMuINCc0L7RgdC60LLQsA!5e0!3m2!1sru!2sru!4v1492546145410" width="638" height="220" frameborder="0" style="border:0" allowfullscreen></iframe>
+                                </div>
+                                <div role="tabpanel" class="tab-pane timeline-item__description-wrap" id="timeline-item__description-wrap">
+                                    <div class="timeline-item__description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec elementum ullamcorper lectus eu laoreet. Fusce non leo et quam semper tincidunt sit amet et nisi. Donec ac libero eu urna laoreet convallis vel in metus. Donec tincidunt urna eget gravida tempor. Suspendisse ac suscipit ex. Suspendisse sit amet mattis lectus. Nam sed ante a lacus pulvinar tincidunt. Vivamus placerat varius sodales. Aenean maximus lacus a diam tristique tincidunt. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Ut consectetur tristique lacinia. Aenean ultrices, nisl sed ullamcorper ultrices, leo neque ultrices metus, at tempor ipsum neque dignissim lacus. Quisque imperdiet urna rutrum turpis malesuada consequat. Etiam a aliquam mi, in egestas urna. In ut nisl quis turpis congue scelerisque.</div>
+                                    <div class="timeline-item__description-toggle">
+                                        <a href="#"></a>
+                                    </div>
+                                    <div class="timeline-item__comments">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="Введите комментарий...">
+                                            <span class="input-group-btn">
+                                                <a href="#" class="btn btn-default timeline-item__comments-send"></a>
+                                            </span>
+                                        </div>
+
+                                        <ul class="timeline-item__comment-list">
+                                            <li class="timeline-item__comment">
+                                                <a href="#" class="timeline-item__comment-avatar"></a>
+                                                <div class="timeline-item__comment-heading">
+                                                    <a href="#">Василий Пупкин</a>
+                                                    <span>12.08.2017 19:38</span>
+                                                </div>
+                                                <div class="timeline-item__comment-body">
+                                                    Текст комментария будет здесь
+                                                </div>
+                                            </li>
+                                            <li class="timeline-item__comment">
+                                                <a href="#" class="timeline-item__comment-avatar"></a>
+                                                <div class="timeline-item__comment-heading">
+                                                    <a href="#">Василий Пупкин</a>
+                                                    <span>12.08.2017 19:38</span>
+                                                </div>
+                                                <div class="timeline-item__comment-body">
+                                                    Текст комментария будет здесь
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="timeline-item__getting-there-wrap">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <span class="clearfix"></span>
+
+                        <ol class="location-events">
+                            <li class="timeline-item clearfix timeline-event">
+                                <span class="timeline-item__time">12.08.2017</span>
+
+                                <div class="timeline-item__block">
+                                    <div class="timeline-item__heading">
+                                        <h3>Россия, Москва</h3>
+                                        <div class="timeline-item_stars stars">
+                                            <i class="active"></i>
+                                            <i class="active"></i>
+                                            <i class="active"></i>
+                                            <i class="active"></i>
+                                            <i></i>
+                                        </div>
+                                    </div>
+                                    <div class="timeline-item__menu">
+                                        <ul>
+                                            <li class="active"><a data-toggle="tab" href="#timeline-item__map-wrap">на карте</a></li>
+                                            <li><a data-toggle="tab" href="#timeline-item__description-wrap">описание</a></li>
+                                            <li><a data-toggle="tab" href="#timeline-item__getting-there-wrap">как добраться?</a></li>
+                                            <li class="edit"><a href="#"></a></li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="tab-content">
+                                        <div role="tabpanel" class="active tab-pane" id="timeline-item__map-wrap">
+                                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d574780.1723663379!2d36.98930748818253!3d55.75441897981755!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x414ac82c9958e7af%3A0xb57a3f488cfc4ca!2z0LMuINCc0L7RgdC60LLQsA!5e0!3m2!1sru!2sru!4v1492546145410" width="638" height="220" frameborder="0" style="border:0" allowfullscreen></iframe>
+                                        </div>
+                                        <div role="tabpanel" class="tab-pane timeline-item__description-wrap" id="timeline-item__description-wrap">
+                                            <div class="timeline-item__description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec elementum ullamcorper lectus eu laoreet. Fusce non leo et quam semper tincidunt sit amet et nisi. Donec ac libero eu urna laoreet convallis vel in metus. Donec tincidunt urna eget gravida tempor. Suspendisse ac suscipit ex. Suspendisse sit amet mattis lectus. Nam sed ante a lacus pulvinar tincidunt. Vivamus placerat varius sodales. Aenean maximus lacus a diam tristique tincidunt. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Ut consectetur tristique lacinia. Aenean ultrices, nisl sed ullamcorper ultrices, leo neque ultrices metus, at tempor ipsum neque dignissim lacus. Quisque imperdiet urna rutrum turpis malesuada consequat. Etiam a aliquam mi, in egestas urna. In ut nisl quis turpis congue scelerisque.</div>
+                                            <div class="timeline-item__description-toggle">
+                                                <a href="#"></a>
+                                            </div>
+                                            <div class="timeline-item__comments">
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" placeholder="Введите комментарий...">
+                                                    <span class="input-group-btn">
+                                                        <a href="#" class="btn btn-default timeline-item__comments-send"></a>
+                                                    </span>
+                                                </div>
+
+                                                <ul class="timeline-item__comment-list">
+                                                    <li class="timeline-item__comment">
+                                                        <a href="#" class="timeline-item__comment-avatar"></a>
+                                                        <div class="timeline-item__comment-heading">
+                                                            <a href="#">Василий Пупкин</a>
+                                                            <span>12.08.2017 19:38</span>
+                                                        </div>
+                                                        <div class="timeline-item__comment-body">
+                                                            Текст комментария будет здесь
+                                                        </div>
+                                                    </li>
+                                                    <li class="timeline-item__comment">
+                                                        <a href="#" class="timeline-item__comment-avatar"></a>
+                                                        <div class="timeline-item__comment-heading">
+                                                            <a href="#">Василий Пупкин</a>
+                                                            <span>12.08.2017 19:38</span>
+                                                        </div>
+                                                        <div class="timeline-item__comment-body">
+                                                            Текст комментария будет здесь
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            
+                                        </div>
+                                        <div role="tabpanel" class="tab-pane" id="timeline-item__getting-there-wrap">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li class="timeline-item clearfix timeline-event">
+                                <span class="timeline-item__time">12.08.2017</span>
+
+                                <div class="timeline-item__block">
+                                    <div class="timeline-item__heading">
+                                        <h3>Россия, Москва</h3>
+                                        <div class="timeline-item_stars stars">
+                                            <i class="active"></i>
+                                            <i class="active"></i>
+                                            <i class="active"></i>
+                                            <i class="active"></i>
+                                            <i></i>
+                                        </div>
+                                    </div>
+                                    <div class="timeline-item__menu">
+                                        <ul>
+                                            <li class="active"><a data-toggle="tab" href="#timeline-item__map-wrap">на карте</a></li>
+                                            <li><a data-toggle="tab" href="#timeline-item__description-wrap">описание</a></li>
+                                            <li><a data-toggle="tab" href="#timeline-item__getting-there-wrap">как добраться?</a></li>
+                                            <li class="edit"><a href="#"></a></li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="tab-content">
+                                        <div role="tabpanel" class="active tab-pane" id="timeline-item__map-wrap">
+                                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d574780.1723663379!2d36.98930748818253!3d55.75441897981755!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x414ac82c9958e7af%3A0xb57a3f488cfc4ca!2z0LMuINCc0L7RgdC60LLQsA!5e0!3m2!1sru!2sru!4v1492546145410" width="638" height="220" frameborder="0" style="border:0" allowfullscreen></iframe>
+                                        </div>
+                                        <div role="tabpanel" class="tab-pane timeline-item__description-wrap" id="timeline-item__description-wrap">
+                                            <div class="timeline-item__description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec elementum ullamcorper lectus eu laoreet. Fusce non leo et quam semper tincidunt sit amet et nisi. Donec ac libero eu urna laoreet convallis vel in metus. Donec tincidunt urna eget gravida tempor. Suspendisse ac suscipit ex. Suspendisse sit amet mattis lectus. Nam sed ante a lacus pulvinar tincidunt. Vivamus placerat varius sodales. Aenean maximus lacus a diam tristique tincidunt. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Ut consectetur tristique lacinia. Aenean ultrices, nisl sed ullamcorper ultrices, leo neque ultrices metus, at tempor ipsum neque dignissim lacus. Quisque imperdiet urna rutrum turpis malesuada consequat. Etiam a aliquam mi, in egestas urna. In ut nisl quis turpis congue scelerisque.</div>
+                                            <div class="timeline-item__description-toggle">
+                                                <a href="#"></a>
+                                            </div>
+                                            <div class="timeline-item__comments">
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" placeholder="Введите комментарий...">
+                                                    <span class="input-group-btn">
+                                                        <a href="#" class="btn btn-default timeline-item__comments-send"></a>
+                                                    </span>
+                                                </div>
+
+                                                <ul class="timeline-item__comment-list">
+                                                    <li class="timeline-item__comment">
+                                                        <a href="#" class="timeline-item__comment-avatar"></a>
+                                                        <div class="timeline-item__comment-heading">
+                                                            <a href="#">Василий Пупкин</a>
+                                                            <span>12.08.2017 19:38</span>
+                                                        </div>
+                                                        <div class="timeline-item__comment-body">
+                                                            Текст комментария будет здесь
+                                                        </div>
+                                                    </li>
+                                                    <li class="timeline-item__comment">
+                                                        <a href="#" class="timeline-item__comment-avatar"></a>
+                                                        <div class="timeline-item__comment-heading">
+                                                            <a href="#">Василий Пупкин</a>
+                                                            <span>12.08.2017 19:38</span>
+                                                        </div>
+                                                        <div class="timeline-item__comment-body">
+                                                            Текст комментария будет здесь
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            
+                                        </div>
+                                        <div role="tabpanel" class="tab-pane" id="timeline-item__getting-there-wrap">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ol>
+                    </li>
+
+                    <li class="timeline-item clearfix timeline-location timeline-item_edit">
+                        <span class="timeline-item__time">12.08.2017</span>
+
+                        <div class="timeline-item__block">
+                            <div class="timeline-item__heading">
+                                <h3>Россия, Москва1</h3>
+                                <div class="timeline-item_stars stars">
+                                    <i class="active"></i>
+                                    <i class="active"></i>
+                                    <i class="active"></i>
+                                    <i class="active"></i>
+                                    <i></i>
+                                </div>
+                            </div>
+                            <div class="timeline-item__menu">
+                                <ul>
+                                    <li class="active"><a data-toggle="tab" href="#timeline-item__edit-main">основное</a></li>
+                                    <li><a data-toggle="tab" href="#timeline-item__edit-description">описание</a></li>
+                                    <li><a data-toggle="tab" href="#timeline-item__edit-comments">комментарии (12)</a></li>
+                                    <li><a data-toggle="tab" href="#timeline-item__edit-album">альбом</a></li>
+                                </ul>
+                            </div>
+                            <div class="tab-content">
+                                <div role="tabpanel" class="active tab-pane" id="timeline-item__edit-main">
+                                    <div class="timeline-item__form-wrap">
+                                        <form>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="eventDateInput">Дата события</label>
+                                                        <input type="date" class="form-control" id="eventDateInput">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6"></div>
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label for="eventTitleInput">Адрес</label>
+                                                        <input type="text" class="form-control" id="eventTitleInput">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d574780.1723663379!2d36.98930748818253!3d55.75441897981755!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x414ac82c9958e7af%3A0xb57a3f488cfc4ca!2z0LMuINCc0L7RgdC60LLQsA!5e0!3m2!1sru!2sru!4v1492546145410" width="638" height="220" frameborder="0" style="border:0" allowfullscreen></iframe>
+                                </div>
+                                <div role="tabpanel" class="tab-pane timeline-item__form-wrap" id="timeline-item__edit-description">
+                                    <div class="summernote"></div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="timeline-item__edit-comments">
+                                    <div class="timeline-item__comments">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="Введите комментарий...">
+                                            <span class="input-group-btn">
+                                                <a href="#" class="btn btn-default timeline-item__comments-send"></a>
+                                            </span>
+                                        </div>
+
+                                        <ul class="timeline-item__comment-list">
+                                            <li class="timeline-item__comment">
+                                                <a href="#" class="timeline-item__comment-avatar"></a>
+                                                <div class="timeline-item__comment-heading">
+                                                    <a href="#">Василий Пупкин</a>
+                                                    <span>12.08.2017 19:38</span>
+                                                    <a href="#" class="btn btn-xs btn-danger pull-right" style="color: #fff">Удалить</a>
+                                                </div>
+                                                <div class="timeline-item__comment-body">
+                                                    Текст комментария будет здесь
+                                                </div>
+                                            </li>
+                                            <li class="timeline-item__comment">
+                                                <a href="#" class="timeline-item__comment-avatar"></a>
+                                                <div class="timeline-item__comment-heading">
+                                                    <a href="#">Василий Пупкин</a>
+                                                    <span>12.08.2017 19:38</span>
+                                                    <a href="#" class="btn btn-xs btn-danger pull-right" style="color: #fff">Удалить</a>
+                                                </div>
+                                                <div class="timeline-item__comment-body">
+                                                    Текст комментария будет здесь
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane timeline-item__album-wrap" id="timeline-item__edit-album">
+                                    <form action="/" class="dropzone timeline-item__album-dropzone" id="my-awesome-dropzone"></form>
+
+                                    <div class="timeline-item__album-item" style="background-image: url(/images/destination_3.jpg)">
+                                        <a href="#" class="btn btn-danger btn-xs btn-block">Удалить</a>
+                                    </div>
+                                    <div class="timeline-item__album-item" style="background-image: url(/images/destination_3.jpg)">
+                                        <a href="#" class="btn btn-danger btn-xs btn-block">Удалить</a>
+                                    </div>
+                                    <div class="timeline-item__album-item" style="background-image: url(/images/destination_3.jpg)">
+                                        <a href="#" class="btn btn-danger btn-xs btn-block">Удалить</a>
+                                    </div>
+                                    <div class="timeline-item__album-item" style="background-image: url(/images/destination_3.jpg)">
+                                        <a href="#" class="btn btn-danger btn-xs btn-block">Удалить</a>
+                                    </div>
+                                    <div class="timeline-item__album-item" style="background-image: url(/images/destination_3.jpg)">
+                                        <a href="#" class="btn btn-danger btn-xs btn-block">Удалить</a>
+                                    </div>
+                                    <div class="timeline-item__album-item" style="background-image: url(/images/destination_3.jpg)">
+                                        <a href="#" class="btn btn-danger btn-xs btn-block">Удалить</a>
+                                    </div>
+                                    <span class="clearfix"></span>
+                                </div>
+                            </div>
+                            <div class="timeline-item__footer">
+                                <div class="timeline-item__update-time pull-left">
+                                    <label>Последнее изменение:</label>
+                                    <span>12.08.2017 18:08</span>
+                                </div>
+                                <div class="pull-right">
+                                    <a href="#" class="btn btn-danger">Удалить</a>
+                                    <a href="#" class="btn btn-primary">Сохранить</a>
+                                </div>
+                                <span class="clearfix"></span>
+                            </div>
+                        </div>
+                        <span class="clearfix"></span>
+                    </li>
+
+                    <li class="timeline-item clearfix timeline-item_add">
+                        <div class="timeline-item__block">
+                            <div class="timeline-item__recomendations-wrap">
+                                <ul class="timeline-item__recomendations">
+                                    <li>
+                                        <a href="#" class="timeline-item__recomendations-item timeline-item__recomendations_location">
+                                            Место
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="timeline-item__recomendations-item timeline-item__recomendations_hotel">
+                                            Отель
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="timeline-item__recomendations-item timeline-item__recomendations_entertainment">
+                                            Развлечения
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="timeline-item__recomendations-item timeline-item__recomendations_sight">
+                                            Интересное
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="timeline-item__recomendations-item timeline-item__recomendations_note">
+                                            Заметка
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <span class="clearfix"></span>
+                    </li>
+
+                    <span class="clearfix"></span>
+                </ul>
+            </div>
+        </div>
+
+
+        <div role="tabpanel" class="tab-pane" id="trip-section__description">
+            <div class="container trip-description">
+                <div class="summernote"></div>
+            </div>
+        </div>
+
+
+        <div role="tabpanel" class="tab-pane" id="trip-section__gallery">
+            <div class="container">
+                <div id="gallery" style="display:none;">
+                
+                    <img alt="Image 1 Title" src="/images/templatemo_slide_1.jpg"
+                        data-image="/images/templatemo_slide_1.jpg"
+                        data-description="Image 1 Description">
+                    
+                    <img alt="Image 2 Title" src="/images/templatemo_slide_2.jpg"
+                        data-image="/images/templatemo_slide_2.jpg"
+                        data-description="Image 2 Description">
+
+                    <img alt="Image 1 Title" src="/images/templatemo_slide_1.jpg"
+                        data-image="/images/templatemo_slide_1.jpg"
+                        data-description="Image 1 Description">
+                    
+                    <img alt="Image 2 Title" src="/images/templatemo_slide_2.jpg"
+                        data-image="/images/templatemo_slide_2.jpg"
+                        data-description="Image 2 Description">
+
+                    
+                
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div> <!-- /.middle-content -->
+
+@section Styles{
+    <link href="~/summernote/summernote.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/trip.css" />
+    <link rel="stylesheet" href="~/dropzone/dropzone.css" />
+    <link rel='stylesheet' href='~/unitegallery/dist/css/unite-gallery.css' type='text/css' /> 
+}
+
+@section Scripts{
+    <script src="~/js/Sortable.min.js"></script>
+    <script src='https://cdn.jsdelivr.net/scrollreveal.js/3.3.1/scrollreveal.min.js'></script>
+    <script src='~/unitegallery/dist/js/unitegallery.min.js'></script>
+    <script src='~/unitegallery/dist/themes/tiles/ug-theme-tiles.js'></script> 
+    <script src="~/summernote/summernote.min.js"></script>
+    <script src="~/summernote/lang/summernote-ru-RU.js"></script>
+    <script src="~/dropzone/dropzone.js"></script>
+
+    <environment names="Development">
+        <script src="https://unpkg.com/vue@2.2.6/dist/vue.js"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script src="https://unpkg.com/vue@2.2.6/dist/vue.min.js"></script>
+    </environment>
+
+    <script>
+        $(function(){
+            jQuery("#gallery").unitegallery(); 
+
+            window.sr = ScrollReveal();
+
+            // https://github.com/RubaXa/Sortable
+            var list = document.getElementById("timeline");
+            var sort = Sortable.create(list, {
+                draggable: ".timeline-location",
+                onSort: function (evt) {
+                    console.log('sorted location');
+                }
+            });
+            var evetsLists = document.getElementsByClassName("location-events");
+            for(var i = 0; i < evetsLists.length; i++){
+                var events = Sortable.create(evetsLists[i], {
+                    draggable: ".timeline-event",
+                    onSort: function (evt) {
+                        console.log('sorted event');
+                    }
+                });
+            }
+            // sort.destroy();
+
+            sr.reveal('.timeline-item__block', {
+                origin: 'right',
+                distance: '100px',
+                easing: 'ease-in-out',
+                duration: 400,
+            });
+
+            $(".summernote").summernote({
+                height: 300,
+                minHeight: 150,
+                maxHeight: 600 
+            });
+        })
+    </script>
+}

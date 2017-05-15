@@ -1,0 +1,57 @@
+﻿@{
+    ViewData["Title"] = "Профиль";
+    ViewData["Page"] = "profile";
+    ViewData["NavTypeMini"] = true;
+}
+@using TravelApp.ViewModels
+@model AccountProfileViewModel
+
+<div class="page-top" id="templatemo_services">
+</div> <!-- /.page-header -->
+
+<div class="middle-content">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-lg-4 col-md-8 col-sm-12 col-xs-12 block-center">
+
+                <div class="profile-photo" id="avatar" style="background-image: url(/avatars/@Model.AvatarUrl)"></div>
+
+                <h3 class="text-center">@User.Identity.Name</h3>
+                <br>
+
+                <form asp-action="Profile" asp-controller="Account" asp-anti-forgery="true" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="AvatarUrl" value="@Model.AvatarUrl" />
+                    <div class="form-group">
+                        <label asp-for="AvatarFile">Avatar</label>
+                        <input class="form-control" type="file" asp-for="AvatarFile" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Name"></label>
+                        <input class="form-control" value="@Model.Name" type="text" asp-for="Name" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Surname"></label>
+                        <input class="form-control" value="@Model.Surname" type="text" asp-for="Surname" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Password"></label>
+                        <input class="form-control" type="password" asp-for="Password" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ConfirmPassword"></label>
+                        <input class="form-control" type="password" asp-for="ConfirmPassword" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group tripFilter">
+                        <button type="submit" class="btn btn-success btn-block">Сохранить</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+
+    </div> <!-- /.container -->
+</div> <!-- /.middle-content -->

@@ -1,0 +1,95 @@
+﻿@{
+    ViewData["Title"] = "Создание путешествия";
+    ViewData["Page"] = "addTrip";
+    ViewData["NavTypeMini"] = true;
+}
+@using TravelApp.ViewModels
+@model TripCreateViewModel
+
+<div class="page-top" id="templatemo_events">
+</div> <!-- /.page-header -->
+
+<div class="middle-content">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-lg-10 col-md-12 block-center">
+                <div class="trip-info-create">
+                    <div class="trip-info-create__header clearfix">
+                        <h3>Создание поездки</h3>
+                        <button type="submit" form="create-form" class="btn btn-primary pull-right">Сохранить</button>
+                    </div>
+                    <div class="trip-info-create__content">
+                        <form id="create-form" asp-action="Create" asp-controller="Trip" asp-anti-forgery="true" class="form-horizontal" enctype="multipart/form-data">
+                            <textarea class="hidden" id="description-textarea" asp-for="Description"></textarea>
+                            <div class="form-group">
+                                <label asp-for="IsPublic" class="col-sm-2 control-label">Статус</label>
+                                <div class="col-sm-6">
+                                    <label class="checkbox-inline">
+                                        <input type="radio" value="true" asp-for="IsPublic" />&nbsp; <strong>Публичная</strong>
+                                    </label>
+
+                                    <label class="checkbox-inline">
+                                        <input type="radio" value="false" asp-for="IsPublic" />&nbsp; <strong>Скрытая</strong>
+                                    </label>
+                                </div>
+                                <span asp-validation-for="IsPublic" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="ImageFile" class="col-sm-2 control-label">Картинка</label>
+                                <div class="col-sm-6">
+                                    <input class="form-control" type="file" asp-for="ImageFile" />
+                                    <span asp-validation-for="ImageFile" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Title" class="col-sm-2 control-label">Название</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" asp-for="Title" />
+                                    <span asp-validation-for="Title" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div id="description-wrap-toggle" class="form-group">
+                                <div class="col-sm-offset-2 col-sm-6">
+                                    <a href="#" class="btn btn-default" id="inputDescription">Ввести описание</a>
+                                </div>
+                            </div>
+                            <div id="description-wrap" class="hidden"><div id="summernote"></div></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Styles{
+    <link href="~/summernote/summernote.css" rel="stylesheet" />
+}
+
+@section Scripts{
+    <script src="~/summernote/summernote.min.js"></script>
+    <script src="~/summernote/lang/summernote-ru-RU.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#summernote").summernote({
+                height: 300,
+                minHeight: 150,
+                maxHeight: 600 
+            });
+
+            $(document).on("click", "#inputDescription", function (e) {
+                e.preventDefault();
+
+                $("#description-wrap-toggle").addClass("hidden");
+                $("#description-wrap").removeClass("hidden");
+            });
+
+            $(document).on("submit", "#create-form", function (e) { 
+                $("#description-textarea").val($("#summernote").summernote('code'))
+                return true
+            })
+        });
+    </script>
+}

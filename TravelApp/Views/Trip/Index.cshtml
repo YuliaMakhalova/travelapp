@@ -1,0 +1,43 @@
+﻿@{
+    ViewData["Page"] = ViewData["LPage"];
+    ViewData["Title"] = ViewData["LTitle"];
+    ViewData["NavTypeMini"] = true;
+}
+@using TravelApp.ViewModels
+@model TripIndexViewModel
+
+<div class="page-top" id="templatemo_about">
+</div> <!-- /.page-header -->
+
+<div class="middle-content">
+    <div class="container">
+        <!-- Trips -->
+        <div class="row">
+            @for (int i = 0; i < Model.Trips.Count; i++)
+            {
+                <div class="col-lg-4 col-md-6 col-xs-12">
+                    <figure class="effect-lily">
+                        @{ 
+                            var photoUrl = @Model.Trips[i].BasicPhoto == null ? "" : @Model.Trips[i].BasicPhoto.Url;
+                        }
+                        <img src="~/photos/min/@photoUrl" alt="img" />
+                        <figcaption>
+                            <div>
+                                <h2>@Model.Trips[i].Title</h2>
+                            </div>
+                            <a asp-area="" asp-controller="Trip" asp-action="Overview" asp-route-id="@Model.Trips[i].Id">Подробнее</a>
+                        </figcaption>
+                    </figure>
+                </div>
+            }            
+        </div>
+
+        <!-- Pagination -->
+        <div class="row">
+            <div class="col-xs-12 text-center pioneer">
+                <page-link page-action="Edit" page-count="@Model.PageCount" page-current="@Model.PageCurrent"></page-link>
+            </div>
+        </div>
+
+    </div> <!-- /.container -->
+</div> <!-- /.middle-content -->
