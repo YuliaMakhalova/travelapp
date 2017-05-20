@@ -6,13 +6,19 @@
 <div class="page-top" id="templatemo_events">
 </div> <!-- /.page-header -->
 
-<div id="tripPage"></div>
+<div id="loader" class="loader-wrap">
+    <div class="loader"></div>
+</div>
+
+<div id="tripPage" class="hidden"></div>
+
 
 @section Styles{
     <link href="~/summernote/summernote.css" rel="stylesheet" />
     <link rel="stylesheet" href="/css/trip.css" />
     <link rel="stylesheet" href="/dropzone/dropzone.css" />
     <link rel="stylesheet" href="~/select2/css/select2.min.css" />
+    <link rel="stylesheet" href="/css/pnotify.custom.min.css" />
 }
 
 @section Scripts{
@@ -23,7 +29,7 @@
     </script>
 
     <script type="text/x-template" id="tripPage-base">
-        <div class="middle-content tripPage" id="">
+        <div class="middle-content tripPage" style="display: none" ref="base">
             <trip-page-heading 
                 v-bind:trip="trip" 
                 v-bind:tabs="tabs"
@@ -80,7 +86,12 @@
         <div class="tripPage__heading">
             <div class="container">
                 <div class="tripPage__title-wrap">
-                    <span class="tripPage__create-time">Дата создания: {{ trip.dateAdd }}</span>
+                    <div class="tripPage__quick-info">
+                        <img v-if="trip.user" :src="'/avatars/' + trip.user.avatarUrl" alt="" />
+                        <span v-if="trip.user" class="tripPage__creator">{{ trip.user.name }} {{ trip.user.surname }}</span><br>
+                        <span class="tripPage__create-time">Дата создания: {{ trip.dateAdd }}</span>
+                    </div>
+
                     <h2 v-if="trip.viewType == 'overview'" 
                         class="tripPage__title">{{ trip.title }}</h2>
                     <input v-if="trip.viewType == 'edit' || trip.viewType == 'create'" 
@@ -267,6 +278,38 @@
                             :style="{'background-image': 'url(/photos/min/'+photo.url+')'}"></a>
                         <span class="clearfix"></span>
                     </div>
+                    <div role="tabpanel" v-bind:class="{active:(selectedTab == 'events')}" class="tab-pane timeline-item__recomendations-wrap">
+                        <ul class="timeline-item__recomendations">
+                            <li>
+                                <a href="#" 
+                                    v-on:click.prevent="addEvent('hotel')"
+                                    class="timeline-item__recomendations-item timeline-item__recomendations_hotel">
+                                    Отель
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" 
+                                    v-on:click.prevent="addEvent('entertainment')"
+                                    class="timeline-item__recomendations-item timeline-item__recomendations_entertainment">
+                                    Развлечения
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" 
+                                    v-on:click.prevent="addEvent('interesting')"
+                                    class="timeline-item__recomendations-item timeline-item__recomendations_sight">
+                                    Интересное
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" 
+                                    v-on:click.prevent="addEvent('note')"
+                                    class="timeline-item__recomendations-item timeline-item__recomendations_note">
+                                    Заметка
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
 
                 <div class="tab-content" v-show="allowEditing && viewType == 'edit'">
@@ -394,7 +437,7 @@
     </script>
 
     <script type="text/x-template" id="timeline-event">
-        <li class="timeline-item clearfix timeline-event" v-bind:class="{'timeline-item_edit': (viewType == 'edit')}">
+        <li class="timeline-item clearfix timeline-event" v-bind:class="[viewType == 'edit' ? 'timeline-item_edit' : '']">
             <span class="timeline-item__time" v-if="!model.mark || model.mark && model.mark !== 'new'">{{ model.eventDate }}</span>
 
             <div class="timeline-item__block">
@@ -633,6 +676,7 @@
     </script>
 
 
+    <script src="/js/pnotify.custom.min.js"></script>
     <script src="~/js/Sortable.min.js"></script>
     <script src='https://cdn.jsdelivr.net/scrollreveal.js/3.3.1/scrollreveal.min.js'></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>

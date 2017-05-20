@@ -136,6 +136,15 @@ namespace TravelApp.Controllers
             if (trip == null)
                 return NotFound();
 
+            var user = await db.Users.FirstOrDefaultAsync(u => u.Id == trip.UserId);
+            if (user != null)
+                trip.User = new User {
+                    Id = user.Id,
+                    Name = user.Name,
+                    Surname = user.Surname,
+                    AvatarUrl = user.AvatarUrl
+                };
+
             try
             {
                 trip.StarsAvg = await db.Stars.Where(s => s.Trip == trip).AverageAsync(s => s.Value);

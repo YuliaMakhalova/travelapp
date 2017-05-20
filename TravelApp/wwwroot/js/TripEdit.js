@@ -7,15 +7,21 @@
         /** Trip info modifiers */
         getTripInfo: function (context) {
             axios.get("/Trip/TripInfo/" + TRIP_ID).then(function(response) {
+                console.log(response)
                 if (response.data !== null) {
                     response.data.viewType = 'overview'
                     if (typeof response.data.starsAvg !== 'undefined'){
                         response.data.starsAvg = Math.round(response.data.starsAvg);
                     }
                     context.commit("setTrip", response.data)
-                }
+                } else throw new Excepton("Error occured");
             }).catch(function(info){
-                console.log(info)
+                $("#loader").addClass("loader--fade");
+                new PNotify({
+                    title: 'Произошла ошибка',
+                    text: 'Ошибка загрузки информации путешествия',
+                    type: 'error'
+                });
             });
         },
         tripStarred: function (context, value) {
@@ -26,7 +32,11 @@
             }).then(function (response) {
                 console.log(response)
             }).catch(function(info){
-                console.log(info)
+                new PNotify({
+                    title: 'Произошла ошибка',
+                    text: 'Ошибка сохранения оценки',
+                    type: 'error'
+                });
             })
 
             context.commit("setTripStars", value);
@@ -43,11 +53,13 @@
 
             axios.post("/Trip/SaveTrip/" + TRIP_ID, data)
             .then(function (response) {
-                console.log(response)
-
                 galleryDropzoneInstance.processQueue();
             }).catch(function(info) {
-                console.log(info)
+                new PNotify({
+                    title: 'Произошла ошибка',
+                    text: 'Ошибка сохранения изменений путешествия',
+                    type: 'error'
+                });
             });
         },
         deleteTrip: function (context) {
@@ -55,25 +67,35 @@
             .then(function (response) {
                 window.location.href="/Trip/MyTrips"
             }).catch(function(info) {
-                console.log(info)
+                new PNotify({
+                    title: 'Произошла ошибка',
+                    text: 'Ошибка удаления путешествия',
+                    type: 'error'
+                });
             });
         },
         setPhotoBasic: function (context, photo) {
             axios.post("/Trip/SetBasicPhoto/" + TRIP_ID, photo)
             .then(function (response) {
-                console.log(response)
                 context.commit('setPhotoBasic', photo);
             }).catch(function(info) {
-                console.log(info)
+                new PNotify({
+                    title: 'Произошла ошибка',
+                    text: 'Ошибка назначения основной фотографии',
+                    type: 'error'
+                });
             });
         },
         deletePhoto: function (context, photo) {
             axios.post("/Trip/DeletePhoto/" + TRIP_ID, photo)
             .then(function (response) {
-                console.log(response)
                 context.commit('deletePhoto', photo);
             }).catch(function(info) {
-                console.log(info)
+                new PNotify({
+                    title: 'Произошла ошибка',
+                    text: 'Ошибка удаления фотографии',
+                    type: 'error'
+                });
             });
         },
         saveSortingState: function (context) {
@@ -102,9 +124,13 @@
                 sorting: sortingData
             })
             .then(function (response) {
-                console.log(response)
+                // console.log(response)
             }).catch(function(info) {
-                console.log(info)
+                new PNotify({
+                    title: 'Произошла ошибка',
+                    text: 'Ошибка сохранения сортировки пунктов путешествия',
+                    type: 'error'
+                });
             });
         },
 
@@ -115,16 +141,27 @@
                     context.commit("addDefaultLocation", response.data)
                 }
             }).catch(function(info){
-                console.log(info)
+                new PNotify({
+                    title: 'Произошла ошибка',
+                    text: 'Возникли проблемы с получением информации локации',
+                    type: 'error'
+                });
             });
         },
-        addDefaultEvent: function (context, type) {
-            axios.get("/Trip/DefaultEvent?type=" + type).then(function(response) {
+        addDefaultEvent: function (context, newdata) {
+            axios.get("/Trip/DefaultEvent?type=" + newdata.type).then(function(response) {
                 if (response.data !== null) {
-                    context.commit("addDefaultEvent", response.data)
+                    context.commit("addDefaultEvent", {
+                        newEvent: response.data,
+                        location: newdata.location
+                    })
                 }
             }).catch(function(info){
-                console.log(info)
+                new PNotify({
+                    title: 'Произошла ошибка',
+                    text: 'Возникли проблемы с получением информации события',
+                    type: 'error'
+                });
             });
         },
 
@@ -138,7 +175,11 @@
                     data.id = response.data.id
                 }
             }).catch(function(info) {
-                console.log(info)
+                new PNotify({
+                    title: 'Произошла ошибка',
+                    text: 'Ошибка создания местоположения',
+                    type: 'error'
+                });
             });
         },
         saveLocation: function (context, data) {
@@ -148,7 +189,11 @@
                     data.dateUpdate = response.data.dateUpdate
                 }
             }).catch(function(info) {
-                console.log(info)
+                new PNotify({
+                    title: 'Произошла ошибка',
+                    text: 'Ошибка сохранения местоположения',
+                    type: 'error'
+                });
             });
         },
         deleteLocation: function (context, data) {
@@ -157,9 +202,13 @@
                 axios.post("/Trip/DeleteLocation/" + TRIP_ID, {
                     locationId: id
                 }).then(function(response){
-                    console.log(response)
+                    // console.log(response)
                 }).catch(function(info) {
-                    console.log(info)
+                    new PNotify({
+                        title: 'Произошла ошибка',
+                        text: 'Ошибка удаления местоположения',
+                        type: 'error'
+                    });
                 })
             }
 
@@ -178,7 +227,11 @@
                     data.locationId = response.data.locationId
                 }
             }).catch(function(info) {
-                console.log(info)
+                new PNotify({
+                    title: 'Произошла ошибка',
+                    text: 'Ошибка создания события',
+                    type: 'error'
+                });
             });
         },
         saveEvent: function (context, data) {
@@ -188,7 +241,11 @@
                     data.dateUpdate = response.data.dateUpdate
                 }
             }).catch(function(info) {
-                console.log(info)
+                new PNotify({
+                    title: 'Произошла ошибка',
+                    text: 'Ошибка сохранения события',
+                    type: 'error'
+                });
             });
         },
         deleteEvent: function (context, data) {
@@ -199,7 +256,11 @@
                 }).then(function(response){
                     console.log(response)
                 }).catch(function(info) {
-                    console.log(info)
+                    new PNotify({
+                        title: 'Произошла ошибка',
+                        text: 'Ошибка удаления события',
+                        type: 'error'
+                    });
                 })
             }
 
@@ -217,7 +278,11 @@
                     context.commit('addLocationComment', response.data);
                 }
             }).catch(function(info) {
-                console.log(info)
+                new PNotify({
+                    title: 'Произошла ошибка',
+                    text: 'Ошибка сохранения комментария',
+                    type: 'error'
+                });
             });
         },
         addEventComment: function (context, data) {
@@ -231,7 +296,11 @@
                     context.commit('addEventComment', response.data);
                 }
             }).catch(function(info) {
-                console.log(info)
+                new PNotify({
+                    title: 'Произошла ошибка',
+                    text: 'Ошибка сохранения комментария',
+                    type: 'error'
+                });
             });
         },
         deleteComment: function (context, data) {
@@ -241,7 +310,11 @@
             .then(function (response) {
                 console.log(response)
             }).catch(function(info) {
-                console.log(info)
+                new PNotify({
+                    title: 'Произошла ошибка',
+                    text: 'Ошибка удаления комментария',
+                    type: 'error'
+                });
             });
         },
 
@@ -249,19 +322,25 @@
         deleteLocationPhoto: function (context, data) {
             axios.post("/Trip/DeletePhoto/" + TRIP_ID, data.photo)
             .then(function (response) {
-                console.log(response)
                 context.commit('deleteLocationPhoto', data);
             }).catch(function(info) {
-                console.log(info)
+                new PNotify({
+                    title: 'Произошла ошибка',
+                    text: 'Ошибка удаления фотографии',
+                    type: 'error'
+                });
             });
         },
         deleteEventPhoto: function (context, data) {
             axios.post("/Trip/DeletePhoto/" + TRIP_ID, data.photo)
             .then(function (response) {
-                console.log(response)
                 context.commit('deleteEventPhoto', data);
             }).catch(function(info) {
-                console.log(info)
+                new PNotify({
+                    title: 'Произошла ошибка',
+                    text: 'Ошибка удаления фотграфии',
+                    type: 'error'
+                });
             });
         },
 
@@ -273,9 +352,13 @@
                 value: data.value,
                 locationId: data.location.id
             }).then(function (response) {
-                console.log(response)
+                // console.log(response)
             }).catch(function(info){
-                console.log(info)
+                new PNotify({
+                    title: 'Произошла ошибка',
+                    text: 'Ошибка сохранения оценки',
+                    type: 'error'
+                });
             })
 
             context.commit("setLocationStars", data);
@@ -287,9 +370,13 @@
                 value: data.value,
                 eventId: data.event.id
             }).then(function (response) {
-                console.log(response)
+                // console.log(response)
             }).catch(function(info){
-                console.log(info)
+                new PNotify({
+                    title: 'Произошла ошибка',
+                    text: 'Ошибка сохранения оценки',
+                    type: 'error'
+                });
             })
 
             context.commit("setEventStars", data);
@@ -329,29 +416,27 @@
             newLocation.mark = "new"
             state.trip.locations.push(newLocation)
         },
-        addDefaultEvent: function (state, newEvent){
-            if (typeof state.trip.locations == 'undefined') return;
+        addDefaultEvent: function (state, data){
+            if (typeof data.location == "undefined" || data.location == null) return;
+            var newEvent = data.newEvent;
 
-            var locationIndex = state.trip.locations.length - 1;
-            if (locationIndex < 0) return;
-
-            if (typeof state.trip.locations[locationIndex].events == 'undefined') {
-                state.trip.locations[locationIndex].events = []
+            if (typeof data.location.events == 'undefined') {
+                data.location.events = []
             }
 
             var lastEventPositionIndex = 0;
-            for (var i = 0; i < state.trip.locations[locationIndex].events.length; i++) {
-                var position = state.trip.locations[locationIndex].events[i].position;
+            for (var i = 0; i < data.location.events.length; i++) {
+                var position = data.location.events[i].position;
                 if (position > lastEventPositionIndex)
                     lastEventPositionIndex = position
             }
 
             newEvent.position = lastEventPositionIndex + 1
-            newEvent.locationId = state.trip.locations[locationIndex].id
+            newEvent.locationId = data.location.id
             newEvent.photos = []
             newEvent.comments = []
             newEvent.mark = "new"
-            state.trip.locations[locationIndex].events.push(newEvent)
+            data.location.events.push(newEvent)
         },
         removeLocation: function (state, location) {
             var locArrayIndex = -1;
@@ -1259,6 +1344,13 @@ var timelineLocation = {
         }
     },
     methods: {
+        addEvent: function (type) {
+            this.$store.commit('setTimelineCreating', true);
+            this.$store.dispatch('addDefaultEvent', {
+                type: type,
+                location: this.model
+            })
+        },
         addComment: function () {
             var comment = this.commentText
             this.$store.dispatch('addLocationComment', {
@@ -1341,6 +1433,14 @@ var timelineLocation = {
                     type: "edit-description"
                 }
             ];
+
+            if (this.allowEditing) {
+                overviewTabs.push({
+                    title: "добавить событие",
+                    active: false,
+                    type: "events"
+                })
+            }
 
             if (typeof this.model.mark == 'undefined' || 
                 typeof this.model.mark !== 'undefined' && this.model.mark !== 'new') {
@@ -1715,6 +1815,24 @@ var tripPage = new Vue({
         },
         trip: 'trip'
     }),
+    watch: {
+        trip: function (newValue, oldValue) {
+            if (newValue !== null && newValue !== {}) {
+                $("#loader").addClass("loader--fade");
+                var that = this;
+                setTimeout(function () {
+                    $(that.$refs.base).fadeIn(700);
+                    window.sr = ScrollReveal();
+                    sr.reveal('.timeline-item__block', {
+                        origin: 'right',
+                        distance: '100px',
+                        easing: 'ease-in-out',
+                        duration: 400,
+                    });
+                }, 700)
+            }
+        }
+    },
     components: {
         "trip-page-heading": tripPageHeading,
         "trip-page-timeline": tripPageTimeline,
@@ -1727,8 +1845,15 @@ var tripPage = new Vue({
             this.$store.dispatch('addDefaultLocation')
         },
         addEvent: function (type) {
+            if (typeof this.trip.locations == 'undefined') return;
+            var locationIndex = this.trip.locations.length - 1;
+            if (locationIndex < 0) return;
+
             this.$store.commit('setTimelineCreating', true);
-            this.$store.dispatch('addDefaultEvent', type)
+            this.$store.dispatch('addDefaultEvent', {
+                type: type,
+                location: this.trip.locations[locationIndex]
+            })
         },
         viewTypeChanged: function (action) {
             if (action == "toEditMode"){
@@ -1744,14 +1869,6 @@ var tripPage = new Vue({
         this.$store.dispatch("getTripInfo")
     },
     mounted: function () {
-        window.sr = ScrollReveal();
-        sr.reveal('.timeline-item__block', {
-            origin: 'right',
-            distance: '100px',
-            easing: 'ease-in-out',
-            duration: 400,
-        });
-
         setBodyBottomPadding();
     }
 })
