@@ -122,6 +122,7 @@ namespace TravelApp.Controllers
         public async Task<IActionResult> TripInfo(int id)
         {
             Trip trip = await db.Trips
+                .Include(t => t.User)
                 .Include(t => t.Photos)
                 .Include(t => t.Locations)
                 .Include(t => t.Locations).ThenInclude(l => l.Photos)
@@ -136,14 +137,15 @@ namespace TravelApp.Controllers
             if (trip == null)
                 return NotFound();
 
-            var user = await db.Users.FirstOrDefaultAsync(u => u.Id == trip.UserId);
-            if (user != null)
-                trip.User = new User {
-                    Id = user.Id,
-                    Name = user.Name,
-                    Surname = user.Surname,
-                    AvatarUrl = user.AvatarUrl
-                };
+            if (trip.User != null)
+            {
+                trip.User.Comments = null;
+                trip.User.Stars = null;
+                trip.User.Trips = null;
+                trip.User.Email = null;
+                trip.User.Password = null;
+            }
+
 
             try
             {
